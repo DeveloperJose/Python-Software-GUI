@@ -1,3 +1,4 @@
+import Tkinter as tk
 class Table(tk.Toplevel):
     def __init__(self, parent):
         tk.Toplevel.__init__(self, parent)

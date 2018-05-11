@@ -1,3 +1,7 @@
+import Tkinter as tk
+
+from titlebar import TitleBar
+
 class TextWindow(tk.Frame):
     def __init__(self, title, *args, **kwargs):
         tk.Frame.__init__(self, *args, **kwargs)

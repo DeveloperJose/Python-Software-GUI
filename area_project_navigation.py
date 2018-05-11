@@ -1,3 +1,8 @@
+import Tkinter as tk
+
+from titlebar import TitleBar
+
+
 class ProjectNavigation(tk.Frame):
 
     def label_clicked(self, event):

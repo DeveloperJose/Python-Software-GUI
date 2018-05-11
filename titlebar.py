@@ -1,3 +1,5 @@
+import Tkinter as tk
+
 class TitleBar(tk.Frame):
     def __init__(self, title, *args, **kwargs):
         tk.Frame.__init__(self, *args, **kwargs)

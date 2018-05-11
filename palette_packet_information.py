@@ -1,3 +1,10 @@
+import Tkinter as tk
+
+from PIL import Image, ImageTk
+
+from table import Table
+
+
 class PacketInformationField(Table):
     def __init__(self, parent):
         Table.__init__(self, parent)

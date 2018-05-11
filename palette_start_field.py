@@ -1,3 +1,5 @@
+from table import Table
+
 class StartField(Table):
     def __init__(self, parent):
         Table.__init__(self, parent)

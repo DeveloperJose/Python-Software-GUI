@@ -1,3 +1,5 @@
+import Tkdnd
+import Tkinter as tk
 
 """
 This code demonstrates a real-world drag and drop.
@@ -17,9 +19,6 @@ Verbosity = 3
 #    for demonstrating what is going on it is useful to see it. This topic
 #    beaten to death in the comment string for Dragged.Press, below.
 LeavePhantomVisible = 0
-
-from Tkinter import *
-import Tkdnd
 
 def MouseInWidget(Widget ,Event):
     """
@@ -123,7 +122,7 @@ class Dragged:
             self.Label = self.OriginalLabel
             self.Image = self.OriginalImage
             self.Label['text'] = self.OriginalText
-            self.Label['relief'] = RAISED
+            self.Label['relief'] = tk.RAISED
 
             self.Label['image'] = self.OriginalImage
             self.Label['compound'] = self.OriginalCompound
@@ -188,7 +187,7 @@ class Dragged:
         self.X, self.Y = XY
         # Create a label which identifies us, including our unique number
         # self.Label = Label(Canvas, text=self.Name, borderwidth=2, relief=RAISED)
-        self.Label = Button(Canvas, text=self.Name, compound=self.Compound, image=self.Image, font=self.Font, command=self.Command, bg=self.Bg, fg=self.Fg, width=self.Width, height=self.Height)
+        self.Label = tk.Button(Canvas, text=self.Name, compound=self.Compound, image=self.Image, font=self.Font, command=self.Command, bg=self.Bg, fg=self.Fg, width=self.Width, height=self.Height)
         # Display the label on a window on the canvas. We need the ID returned by
         #    the canvas so we can move the label around as the mouse moves.
         self.ID = Canvas.create_window(self.X - self.OffsetX, self.Y - self.OffsetY, window=self.Label, anchor="nw")
@@ -330,10 +329,10 @@ class Dragged:
         # Made the phantom invisible (unless the user asked to see it)
         if LeavePhantomVisible:
             self.OriginalLabel['text'] = '<phantom>'
-            self.OriginalLabel['relief'] = RAISED
+            self.OriginalLabel['relief'] = tk.RAISED
         else:
             self.OriginalLabel['text'] = ''
-            self.OriginalLabel['relief'] = FLAT
+            self.OriginalLabel['relief'] = tk.FLAT
 
         # Say we have no current label
         self.ID = None
@@ -358,7 +357,7 @@ class Dragged:
             self.Appear(self.OriginalCanvas, XY)
 
 
-class CanvasDnd(Canvas):
+class CanvasDnd(tk.Canvas):
     """
     A canvas to which we have added those methods necessary so it can
         act as both a TargetWidget and a TargetObject.
@@ -370,7 +369,7 @@ class CanvasDnd(Canvas):
     def __init__(self, Master, cnf={}, **kw):
         if cnf:
             kw.update(cnf)
-        Canvas.__init__(self, Master, kw)
+        tk.Canvas.__init__(self, Master, kw)
         # ObjectDict is a dictionary of dragable object which are currently on
         #    this canvas, either because they have been dropped there or because
         #    they are in mid-drag and are over this canvas.
@@ -401,7 +400,7 @@ class CanvasDnd(Canvas):
         Source.Appear(self, XY)
         # Add the DraggedObject to the dictionary of objects which are on this
         #    canvas.
-        self.ObjectDict[Source.Name] = Source
+        self.ObjectDict[Source.ID] = Source
 
     def dnd_leave(self, Source, Event):
         # This is called when the mouse pointer goes from inside the
@@ -413,7 +412,7 @@ class CanvasDnd(Canvas):
         Source.Vanish()
         # Remove the DraggedObject from the dictionary of objects which are on
         #    this canvas
-        del self.ObjectDict[Source.Name]
+        del self.ObjectDict[Source.ID]
 
     def dnd_motion(self, Source, Event):
         # This is called when the mouse pointer moves withing the TargetWidget.
@@ -505,32 +504,32 @@ if __name__ == "__main__":
         print '----------'
 
 
-    Root = Tk()
+    Root = tk.Tk()
     Root.title('Drag-and-drop "real-world" demo')
 
     # Create a button to act as the InitiationObject and bind it to <ButtonPress> so
     #    we start drag and drop when the user clicks on it.
     # The only reason we display the content of the trash bin is to show that it
     #    has no objects, even after some have been dropped on it.
-    InitiationObject = Button(Root, text='InitiationObject')
-    InitiationObject.pack(side=TOP)
+    InitiationObject = tk.Button(Root, text='InitiationObject')
+    InitiationObject.pack(side=tk.TOP)
     InitiationObject.bind('<ButtonPress>', on_dnd_start)
 
     # Create two canvases to act as the Target Widgets for the drag and drop. Note that
     #    these canvases will act as both the TargetWidget AND the TargetObject.
-    TargetWidget_TargetObject = CanvasDnd(Root, relief=RAISED, bd=2)
-    TargetWidget_TargetObject.pack(expand=YES, fill=BOTH)
+    TargetWidget_TargetObject = CanvasDnd(Root, relief=tk.RAISED, bd=2)
+    TargetWidget_TargetObject.pack(expand=tk.YES, fill=tk.BOTH)
 
-    TargetWidget_TargetObject2 = CanvasDnd(Root, relief=RAISED, bd=2)
-    TargetWidget_TargetObject2.pack(expand=YES, fill=BOTH)
+    TargetWidget_TargetObject2 = CanvasDnd(Root, relief=tk.RAISED, bd=2)
+    TargetWidget_TargetObject2.pack(expand=tk.YES, fill=tk.BOTH)
 
     # Create an instance of a trash can so we can get rid of dragged objects
     #    if so desired.
-    Trash = TrashBin(Root, relief=RAISED, bd=2)
-    Trash.pack(expand=NO)
+    Trash = TrashBin(Root, relief=tk.RAISED, bd=2)
+    Trash.pack(expand=tk.NO)
 
     # Create a button we can press to display the current content of the
     #    canvases ObjectDictionaries.
-    Button(text='Show canvas ObjectDicts', command=ShowObjectDicts).pack()
+    tk.Button(text='Show canvas ObjectDicts', command=ShowObjectDicts).pack()
 
     Root.mainloop()

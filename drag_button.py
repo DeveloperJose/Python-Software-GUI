@@ -1,3 +1,8 @@
+import Tkdnd
+import Tkinter as tk
+
+from dnd import Dragged
+
 class DragButton(tk.Button):
     def on_dnd_start(self, event, name, component):
         ThingToDrag = Dragged(name, component)
