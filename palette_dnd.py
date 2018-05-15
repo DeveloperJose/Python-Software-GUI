@@ -1,8 +1,8 @@
 import Tkinter as tk
 import Tkdnd
 
-from palette_info import StartFieldInfo, ConnectorInfo, FieldInfo
-from palette_view import FieldView, StartFieldView, ConnectorView
+from palette_info import StartFieldInfo, ConnectorInfo, FieldInfo, EndFieldInfo
+from palette_view import FieldView, StartFieldView, ConnectorView, EndFieldView
 from workspace import Workspace
 
 def MouseInWidget(Widget ,Event):
@@ -56,6 +56,8 @@ class Draggable():
             view = ConnectorView(Canvas, self.INFO_ID)
         elif isinstance(info, FieldInfo):
             view = FieldView(Canvas, self.INFO_ID)
+        elif isinstance(info, EndFieldInfo):
+            view = EndFieldView(Canvas, self.INFO_ID)
         else:
             raise Exception('Info is not supported')
         view.resurrect(info)

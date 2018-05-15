@@ -2,10 +2,26 @@ import xml.etree.ElementTree as ET
 class FieldInfo():
     def __init__(self):
         self.name = ""
+        self.abbreviation = ""
+        self.description = ""
+        self.reference_list = ""
+        self.data_type = ""
+        self.base = ""
+        self.mask = ""
+        self.value_constraint = ""
+        self.required = ""
 
     def to_xml(self, root):
         e = ET.SubElement(root, 'field')
         e.set('name', self.name)
+        e.set('abbreviation', self.abbreviation)
+        e.set('description', self.description)
+        e.set('reference_list', self.reference_list)
+        e.set('data_type', self.data_type)
+        e.set('base', self.base)
+        e.set('mask', self.mask)
+        e.set('value_constraint', self.value_constraint)
+        e.set('required', self.required)
         return e
 
     def __str__(self):

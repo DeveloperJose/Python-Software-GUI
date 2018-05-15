@@ -14,7 +14,7 @@ class AreaDissectorBuilder(tk.Frame):
         self.hbar = tk.Scrollbar(self, orient=tk.HORIZONTAL)
         self.vbar = tk.Scrollbar(self, orient=tk.VERTICAL)
 
-        canvas = CanvasDnd(self.frame_canvas, bg='white', width=800, height=500, scrollregion=(0,0,1000,1000))
+        canvas = CanvasDnd(self.frame_canvas, bg='white', width=800, height=500, scrollregion=(0,0,5000,5000))
         canvas.config(xscrollcommand=self.hbar.set, yscrollcommand=self.vbar.set)
         self.hbar.config(command=canvas.xview)
         self.vbar.config(command=canvas.yview)

@@ -59,19 +59,24 @@ class AreaWorkspace(tk.Tk):
         top.grid(row=0,column=1, sticky='N', padx=2, pady=2)
         left.grid(row=1,column=0, sticky='NS', padx=1, pady=2)
 
+        pcap_path = "C:\\Users\\xeroj\Desktop\\Local_Programming\\Python-Software-GUI\\example\\icmp.pcap"
+        lua_path = "C:\\Users\\xeroj\Desktop\\Local_Programming\\Python-Software-GUI\\example\\icmp.lua"
+
         center_top = AreaDissectorBuilder(center)
         center_bottom = tk.Frame(center)
         psa = AreaPacketStream(center_bottom)
         dsa = AreaDissectedStream(center_bottom)
+        dsa.get_info(pcap_path,lua_path)
         rda = AreaRawData(center_bottom)
+        rda.get_raw(pcap_path)
         ca = AreaConsole(center_bottom)
 
         center_top.grid(column=0,row=0, sticky="NS")
         center_bottom.grid(column=0, row=1, sticky='NS')
-        psa.grid(column=0,row=0,sticky='E')
-        dsa.grid(column=1,row=0,sticky='E')
-        rda.grid(column=2,row=0,sticky='E')
-        ca.grid(column=3,row=0,sticky='E')
+        psa.grid(column=0,row=0,sticky='NE')
+        dsa.grid(column=1,row=0,sticky='NE')
+        rda.grid(column=2,row=0,sticky='NE')
+        ca.grid(column=3,row=0,sticky='NE')
 
         button_createProject = tk.Button(top, text='Create Project', command=lambda:self.new_window(WindowType.WINDOW_NEW_PROJECT))
         button_saveProject = tk.Button(top, text='Save Project')

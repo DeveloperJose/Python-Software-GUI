@@ -26,27 +26,94 @@ class View(tk.Canvas):
         self.delete(tk.ALL)
 
 class FieldView(View):
+    def init_vars(self):
+        self.var_name.trace('w', self.__update__)
+        self.var_abbreviation.trace('w', self.__update__)
+        self.var_description.trace('w', self.__update__)
+        self.var_datatype.trace('w', self.__update__)
+        self.var_base.trace('w', self.__update__)
+        self.var_vc.trace('w', self.__update__)
+        self.var_required.trace('w', self.__update__)
+
     def __init__(self, master, INFO_ID):
         View.__init__(self, master, INFO_ID)
-        self['bg'] = 'blue'
-        self['width'] = 200
-        self['height'] = 100
+        self['height'] = 210
 
-        # StringVars
+        self.titlebar = TitleBar(self, 'Field []')
+
         self.var_name = tk.StringVar()
-        self.var_name.trace('w', self.__update__)
+        self.var_abbreviation = tk.StringVar()
+        self.var_description = tk.StringVar()
+        self.var_datatype = tk.StringVar()
+        self.var_base = tk.StringVar()
+        self.var_vc = tk.StringVar()
+        self.var_required = tk.StringVar()
 
-        self.entry_name = tk.Entry(self, textvariable=self.var_name)
-        self.lbl_name = tk.Label(self, text='Name')
+        self.proto_name_label = tk.Label(text="Name")
+        self.entry_name = tk.Entry(self, textvariable=self.var_name, width=40)
+        self.abbr_label = tk.Label(text="Abbreviation")
+        self.abbr_entry = tk.Entry(self, textvariable=self.var_abbreviation, width=40)
+        self.desc_label = tk.Label(text="Description")
+        self.desc_entry = tk.Entry(self, textvariable=self.var_description, width=40)
+        self.datatype_list = (
+        'types.NONE', 'ftypes.PROTOCOL', 'ftypes.BOOLEAN', 'ftypes.UINT8', 'ftypes.UINT16', 'ftypes.UINT24',
+        'ftypes.UINT32', 'ftypes.UINT64', 'ftypes.INT8', 'ftypes.INT16', 'ftypes.INT24', 'ftypes.INT32', 'ftypes.INT64',
+        'ftypes.FLOAT', 'ftypes.DOUBLE', 'ftypes.ABSOLUTE_TIME', 'ftypes.RELATIVE_TIME', 'ftypes.STRING',
+        'ftypes.STRINGZ', 'ftypes.UINT_STRING', 'ftypes.ETHER', 'ftypes.BYTES', 'ftypes.UINT_BYTES', 'ftypes.IPv4',
+        'ftypes.IPv6', 'ftypes.IPXNET', 'ftypes.FRAMENUM', 'ftypes.PCRE', 'ftypes.GUID', 'ftypes.OID', 'ftypes.EUI6')
+        self.var_datatype.set(self.datatype_list[0])
+        self.entry_datatype = tk.OptionMenu(self, self.var_datatype, *self.datatype_list)
+        self.datatype_label = tk.Label(text="Datatype")
+        self.base_label = tk.Label(text="Base")
+        self.base_list = ('base.NONE', 'base.DEC', 'base.HEX', 'base.OCT', 'base.DEC_HEX', 'base.HEX_DEC')
+        self.var_base.set(self.base_list[0])
+        self.entry_base = tk.OptionMenu(self, self.var_base, *self.base_list)
+        self.vc_label = tk.Label(text="Value Constraint")
+        self.vc_entry = tk.Entry(self, textvariable=self.var_vc, width=40)
+        self.required_label = tk.Label(text="Required")
+        self.required_list = ('Yes', 'No')
+        self.var_required.set(self.required_list[0])
+        self.required_entry = tk.OptionMenu(self, self.var_required, *self.required_list)
 
-        self.create_window((120, 11), window=self.entry_name)
-        self.create_window((20, 11), window=self.lbl_name)
+        self.create_window((47, 50), window=self.proto_name_label)
+        self.create_window((190, 12), width=380, window=self.titlebar)
+        self.create_window((250, 50), window=self.entry_name)
+        self.create_window((38, 70), window=self.abbr_label)
+        self.create_window((250, 70), window=self.abbr_entry)
+        self.create_window((35, 90), window=self.desc_label)
+        self.create_window((250, 90), window=self.desc_entry)
+        self.create_window((250, 118), window=self.entry_datatype)
+        self.create_window((28, 118), window=self.datatype_label)
+        self.create_window((17, 140), window=self.base_label)
+        self.create_window((250, 145), window=self.entry_base)
+        self.create_window((45, 170), window=self.vc_label)
+        self.create_window((250, 170), window=self.vc_entry)
+        self.create_window((28, 196), window=self.required_label)
+        self.create_window((250, 196), window=self.required_entry)
 
     def update(self, info):
         info.name = self.var_name.get()
+        info.abbreviation = self.var_abbreviation.get()
+        info.description = self.var_description.get()
+        info.reference_list = ''
+        info.data_type = self.var_datatype.get()
+        info.base = self.var_base.get()
+        info.mask = ''
+        info.value_constraint = self.var_vc.get()
+        info.required = self.var_required.get()
+
+        self.titlebar.title.set('Field [%s]' % info.name)
 
     def resurrect(self, info):
         self.var_name.set(info.name)
+        self.var_abbreviation.set(info.abbreviation)
+        self.var_description.set(info.description)
+        self.var_datatype.set(info.data_type)
+        self.var_base.set(info.base)
+        self.var_vc.set(info.value_constraint)
+        self.var_required.set(info.required)
+
+        self.titlebar.title.set('Field [%s]' % info.name)
 
 class StartFieldView(View):
     def init_vars(self):
@@ -57,35 +124,39 @@ class StartFieldView(View):
 
     def __init__(self, master, INFO_ID):
         View.__init__(self, master, INFO_ID)
-        self['bg'] = 'purple'
         self['height'] = 150
 
         self.titlebar = TitleBar(self, 'Start Field []')
 
-        self.lbl_proto_name = tk.Label(self,text='Protocol Name')
-        self.lbl_proto_desc = tk.Label(self,text='Protocol Description')
-        self.lbl_dep_proto_name = tk.Label(self,text='Dependent Protocol Name')
-        self.lbl_dep_pattern = tk.Label(self,text='Dependency Pattern')
-
-        self.var_proto_name = tk.StringVar(self)
-        self.var_proto_desc = tk.StringVar(self)
-        self.var_dep_proto_name = tk.StringVar(self)
-        self.var_dep_pattern = tk.StringVar(self)
-
+        self.protocol_name_label = tk.Label(text='Protocol Name')
+        self.var_proto_name = tk.StringVar()
         self.entry_proto_name = tk.Entry(self, textvariable=self.var_proto_name, width=40)
-        self.entry_proto_desc = tk.Entry(self, textvariable=self.var_proto_desc, width=40)
-        self.entry_dep_proto_name = tk.Entry(self, textvariable=self.var_dep_proto_name, width=35)
-        self.entry_dep_pattern = tk.Entry(self, textvariable=self.var_dep_pattern, width=35)
 
-        self.create_window((320, 12), window=self.titlebar)
-        self.create_window((47, 50), window=self.lbl_proto_name)
+        self.create_window((47,50),window=self.protocol_name_label)
+        self.create_window((190, 10), width=380, window=self.titlebar)
         self.create_window((250, 50), window=self.entry_proto_name)
-        self.create_window((60, 70), window=self.lbl_proto_desc)
-        self.create_window((250, 70), window=self.entry_proto_desc)
-        self.create_window((76, 90), window=self.lbl_dep_proto_name)
+
+        self.protocol_desc_label = tk.Label(text='Protocol Description')
+        self.var_proto_desc = tk.StringVar()
+        self.entry_proto_desc = tk.Entry(self, textvariable=self.var_proto_desc, width=40)
+
+        self.create_window((60,70), window=self.protocol_desc_label)
+        self.create_window((250,70), window= self.entry_proto_desc)
+################
+        self.protocol_dpn_label = tk.Label(text='Dependent Protocol Name')
+        self.var_dep_proto_name = tk.StringVar()
+        self.entry_dep_proto_name = tk.Entry(self, textvariable=self.var_dep_proto_name, width=35)
+
+        self.create_window((76, 90), window=self.protocol_dpn_label)
         self.create_window((265, 90), window=self.entry_dep_proto_name)
-        self.create_window((60, 110), window=self.lbl_dep_pattern)
-        self.create_window((250, 117), window=self.entry_dep_pattern)
+#################
+        self.dp_label = tk.Label(text='Dependency Pattern')
+        self.var_dep_pattern = tk.StringVar()
+        self.entry_dp = tk.Entry(self, textvariable=self.var_dep_pattern, width=40)
+
+        self.create_window((60, 110), window=self.dp_label)
+        self.create_window((250, 117), window=self.entry_dp)
+        self['height']=150
 
     def update(self, info):
         info.proto_name = self.var_proto_name.get()
@@ -100,8 +171,22 @@ class StartFieldView(View):
         self.var_proto_desc.set(info.proto_desc)
         self.var_dep_proto_name.set(info.dep_proto_name)
         self.var_dep_pattern.set(info.dep_pattern)
-
         self.titlebar.title.set('Start Field [%s]' % info.proto_name)
+
+class EndFieldView(View):
+    def __init__(self, master, INFO_ID):
+        View.__init__(self, master, INFO_ID)
+        self['height']=30
+        self['width']=150
+        self.title_bar = TitleBar(self, 'End Field')
+
+        self.create_window((75,12),width=150,window=self.title_bar)
+
+    def update(self, *args):
+        pass
+
+    def resurrect(self, info):
+        pass
 
 class ConnectorView(View):
     def __init__(self, master, INFO_ID):
@@ -109,9 +194,10 @@ class ConnectorView(View):
 
         self['bg'] = 'red'
         self['height'] = 100
+        self['width'] = 300
 
         from titlebar import TitleBar
-        self.titlebar = TitleBar(self, 'Connector {src->dst}')
+        self.titlebar = TitleBar(self, 'Connector')
 
         # StringVars
         self.var_src = tk.StringVar(self, 'None')
@@ -129,9 +215,9 @@ class ConnectorView(View):
         self.dst.bind('<Button-1>', self.on_menu_open)
 
         # Layout
-        self.create_window((320, 12), window=self.titlebar)
-        self.create_window((65, 20), window=self.src)
-        self.create_window((65, 40), window=self.dst)
+        self.create_window((101, 10), width=400, window=self.titlebar)
+        self.create_window((65, 40), window=self.src)
+        self.create_window((65, 80), window=self.dst)
 
     def on_menu_open(self, event):
         menu_src = self.src["menu"]
@@ -152,7 +238,7 @@ class ConnectorView(View):
         info.src = self.var_src.get()
         info.dst = self.var_dst.get()
         self.update_line(info)
-        self.titlebar.title.set("Connector {%s->%s}" % (info.src, info.dst))
+        # self.titlebar.title.set("Connector {%s->%s}" % (info.src, info.dst))
 
     def update_line(self, info):
         if info.src != 'None' and info.dst != 'None':
