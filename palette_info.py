@@ -37,7 +37,7 @@ class ConnectorInfo():
         e = ET.SubElement(root, 'connector')
         e.set('src', self.src)
         e.set('dst', self.dst)
-        e.set('line_id', self.line_id)
+        e.set('line_id', str(self.line_id))
         return e
 
 class StartFieldInfo():
