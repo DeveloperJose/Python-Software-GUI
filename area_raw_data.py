@@ -1,5 +1,5 @@
-from area import TextWindow
+from area import Area
 
-class RawDataArea(TextWindow):
+class AreaRawData(Area):
     def __init__(self, *args, **kwargs):
-        TextWindow.__init__(self, "Raw Data Area", *args, **kwargs)
+        Area.__init__(self, "Raw Data Area", *args, **kwargs)

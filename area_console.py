@@ -1,5 +1,5 @@
-from area import TextWindow
+from area import Area
 
-class ConsoleArea(TextWindow):
+class AreaConsole(Area):
     def __init__(self, *args, **kwargs):
-        TextWindow.__init__(self, "Console", *args, **kwargs)
+        Area.__init__(self, "Console", *args, **kwargs)

@@ -1,5 +1,5 @@
-from area import TextWindow
+from area import Area
 
-class DissectedStreamArea(TextWindow):
+class AreaDissectedStream(Area):
     def __init__(self, *args, **kwargs):
-        TextWindow.__init__(self, "Dissected Stream Area", *args, **kwargs)
+        Area.__init__(self, "Dissected Stream Area", *args, **kwargs)

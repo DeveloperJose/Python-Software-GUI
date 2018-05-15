@@ -1,7 +1,7 @@
 import Tkinter as tk
 
 
-class ProjectImport(tk.Toplevel):
+class DialogImportProject(tk.Toplevel):
     def __init__(self, *args, **kargs):
         tk.Toplevel.__init__(self, *args, **kargs)
         self.title("Project Import")

@@ -1,28 +1,27 @@
 import Tkinter as tk
 
 class TitleBar(tk.Frame):
-    def __init__(self, title, *args, **kwargs):
-        tk.Frame.__init__(self, *args, **kwargs)
+    def __init__(self, master, title):
+        tk.Frame.__init__(self, master)
 
-        self.titles = tk.Label(self, text=title, anchor='center', background="gray")
+        self.title = tk.StringVar()
+        self.title.set(title)
+        self.lbl_title = tk.Label(self, text=title, textvariable=self.title, anchor='center', background="gray")
 
-        img = tk.PhotoImage(file="close.gif")
-        self.close_img = img.subsample(9, 9)
+        self.close_img = tk.PhotoImage(file="close.gif").subsample(9, 9)
         self.close = tk.Button(self, image=self.close_img, command=self.on_close)
 
-        img = tk.PhotoImage(file="minimize.gif")
-        self.min_img = img.subsample(9, 9)
+        self.min_img = tk.PhotoImage(file="minimize.gif").subsample(9,9)
         self.minimize = tk.Button(self, image=self.min_img, command=self.on_minimize)
 
-        img = tk.PhotoImage(file="maximize.gif")
-        self.max_img = img.subsample(9, 9)
+        self.max_img = tk.PhotoImage(file="maximize.gif").subsample(9, 9)
         self.maximize = tk.Button(self, image=self.max_img, command=self.on_maximize)
 
         self.close.pack(side='right')
         self.maximize.pack(side='right')
         self.minimize.pack(side='right')
+        self.lbl_title.pack(side='left', fill="x", expand=True)
 
-        self.titles.pack(side='left', fill="x", expand=True)
 
     def set_min(self, lamb):
         self.lamb1 = lamb

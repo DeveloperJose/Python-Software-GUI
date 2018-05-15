@@ -1,20 +1,32 @@
 import Tkinter as tk
 
-from area_console import ConsoleArea
-from area_dissected_stream import DissectedStreamArea
-from area_dissector_builder import DBuilder
-from area_packet_stream import PacketStreamArea
-from area_project_navigation import ProjectNavigation
-from area_raw_data import RawDataArea
-from dialog_export_project import ProjectExport
-from dialog_generate_dissector_script import DissectorScript
-from dialog_import_project import ProjectImport
+from area_console import AreaConsole
+from area_dissected_stream import AreaDissectedStream
+from area_dissector_builder import AreaDissectorBuilder
+from area_packet_stream import AreaPacketStream
+from area_project_navigation import AreaProjectNavigation
+from area_raw_data import AreaRawData
+from dialog_export_project import DialogExportProject
+from dialog_generate_dissector_script import DialogGenerateDissectorScript
+from dialog_import_project import DialogImportProject
 from dialog_new_project import DialogNewProject
-from dialog_open_pcap import PCAP
-from dialog_organize_views import OrganizeViews
+from dialog_open_pcap import DialogOpenPCAP
+from dialog_organize_views import DialogOrganizeViews
 from dialog_workspace_launcher import DialogWorkspaceLauncher
-from window_type import WindowType
 
+class WindowType():
+    WINDOW_FIELD = 0
+    WINDOW_START_FIELD = 1
+    WINDOW_END_FIELD = 2
+    WINDOW_RLIST = 3
+    WINDOW_PINFO = 4
+    WINDOW_WORKSPACE_LAUNCHER=5
+    WINDOW_NEW_PROJECT=6
+    WINDOW_DISSECTOR_SCRIPT=7
+    WINDOW_PROJECT_IMPORT=8
+    WINDOW_PROJECT_EXPORT=9
+    WINDOW_ORGANIZE_VIEWS=10
+    WINDOW_OPEN_PCAP=11
 
 class AreaWorkspace(tk.Tk):
     def new_window(self, type):
@@ -23,33 +35,36 @@ class AreaWorkspace(tk.Tk):
         elif type == WindowType.WINDOW_NEW_PROJECT:
             form = DialogNewProject(None)
         elif type == WindowType.WINDOW_DISSECTOR_SCRIPT:
-            form = DissectorScript(None)
+            form = DialogGenerateDissectorScript(None)
         elif type == WindowType.WINDOW_PROJECT_IMPORT:
-            form = ProjectImport(None)
+            form = DialogImportProject(None)
         elif type == WindowType.WINDOW_PROJECT_EXPORT:
-            form = ProjectExport(None)
+            form = DialogExportProject(None)
         elif type == WindowType.WINDOW_ORGANIZE_VIEWS:
-            form = OrganizeViews(None)
+            form = DialogOrganizeViews(None)
         elif type == WindowType.WINDOW_OPEN_PCAP:
-            form = PCAP(None)
+            form = DialogOpenPCAP(None)
 
     def __init__(self):
         tk.Tk.__init__(self)
         self.title('Protocol Dissector Generator System')
 
+        import workspace
+        workspace.Workspace.current = workspace.Workspace('Example')
+
         center = tk.Frame(self)
         top = tk.Frame(self)
-        left = ProjectNavigation(self)
+        left = AreaProjectNavigation(self)
         center.grid(row=1,column=1, sticky='NEWS', padx=0, pady=2)
         top.grid(row=0,column=1, sticky='N', padx=2, pady=2)
         left.grid(row=1,column=0, sticky='NS', padx=1, pady=2)
 
-        center_top = DBuilder(center)
+        center_top = AreaDissectorBuilder(center)
         center_bottom = tk.Frame(center)
-        psa = PacketStreamArea(center_bottom)
-        dsa = DissectedStreamArea(center_bottom)
-        rda = RawDataArea(center_bottom)
-        ca = ConsoleArea(center_bottom)
+        psa = AreaPacketStream(center_bottom)
+        dsa = AreaDissectedStream(center_bottom)
+        rda = AreaRawData(center_bottom)
+        ca = AreaConsole(center_bottom)
 
         center_top.grid(column=0,row=0, sticky="NS")
         center_bottom.grid(column=0, row=1, sticky='NS')

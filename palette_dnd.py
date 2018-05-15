@@ -1,22 +1,16 @@
 import Tkinter as tk
 import Tkdnd
-import copy
 
-class Tree:
-    current = None
-
-    def __init__(self):
-        self.fields = []
-
-    def to_xml(self):
-        pass
+from palette_info import StartFieldInfo, ConnectorInfo, FieldInfo
+from palette_view import FieldView, StartFieldView, ConnectorView
+from workspace import Workspace
 
 def MouseInWidget(Widget ,Event):
     x = Event.x_root - Widget.winfo_rootx()
     y = Event.y_root - Widget.winfo_rooty()
     return (x ,y)
 
-class PaletteDraggable():
+class Draggable():
     def __init__(self, parent, frame):
         self.Canvas = None
         self.OriginalCanvas = None
@@ -27,7 +21,7 @@ class PaletteDraggable():
         self.OffsetY = 10
 
         self.Parent = parent
-        self.Frame = frame
+        self.INFO_ID = frame
 
     def dnd_end(self, Target, Event):
         # self.Label.invoke()
@@ -55,24 +49,42 @@ class PaletteDraggable():
             self.OriginalID = None
             self.OriginalLabel = None
 
+    def view_from_info(self, Canvas, info):
+        if isinstance(info, StartFieldInfo):
+            view = StartFieldView(Canvas, self.INFO_ID)
+        elif isinstance(info, ConnectorInfo):
+            view = ConnectorView(Canvas, self.INFO_ID)
+        elif isinstance(info, FieldInfo):
+            view = FieldView(Canvas, self.INFO_ID)
+        else:
+            raise Exception('Info is not supported')
+        view.resurrect(info)
+        view.init_vars()
+        return view
+
     def Appear(self, Canvas, XY):
         if self.Canvas:
             return
 
         self.X, self.Y = XY
-        if self.Frame is not None:
-            info = Tree.current.fields[self.Frame]
-            view = StartFieldView(Canvas, self.Frame)
-            view.resurrect(info)
-            self.Label = view
-            #self.Label = info.create_view(Canvas, self.Frame)
+        self.X = Canvas.canvasx(self.X)
+        self.Y = Canvas.canvasy(self.Y)
+        if self.INFO_ID is not None:
+            info = Workspace.current.get_tree().fields[self.INFO_ID]
+            self.Label = self.view_from_info(Canvas, info)
         else:
-            self.Label = tk.Label(Canvas, text='Hint')
+            raise Exception('Info_ID is None')
         # Display the label on a window on the canvas. We need the ID returned by
         #    the canvas so we can move the label around as the mouse moves.
-        self.ID = Canvas.create_window(self.X - self.OffsetX, self.Y - self.OffsetY, window=self.Label, anchor="nw")
+
+        x = self.X - self.OffsetX
+        y = self.Y - self.OffsetY
+        self.ID = Canvas.create_window(x, y, window=self.Label, anchor="nw")
         # Note the canvas on which we drew the label.
         self.Canvas = Canvas
+
+        self.Label.VIEW_ID = self.ID
+        Workspace.current.get_tree().views[self.INFO_ID] = self.Label
 
     def Vanish(self, All=0):
         """
@@ -100,6 +112,8 @@ class PaletteDraggable():
     def Move(self, XY):
         assert self.Canvas, "Can't move because we are not on a canvas"
         self.X, self.Y = XY
+        self.X = self.Canvas.canvasx(self.X)
+        self.Y = self.Canvas.canvasy(self.Y)
         self.Canvas.coords(self.ID, self.X - self.OffsetX, self.Y - self.OffsetY)
 
     def Press(self, Event):
@@ -109,7 +123,7 @@ class PaletteDraggable():
         self.OriginalLabel = self.Label
 
         # Make phantom invisible
-        self.Label.hide()
+        self.Label.__hide__()
 
         # Say we have no current label
         self.ID = None
@@ -124,46 +138,3 @@ class PaletteDraggable():
             # Draw a label of ourself for the user to drag around
             XY = MouseInWidget(self.OriginalCanvas, Event)
             self.Appear(self.OriginalCanvas, XY)
-
-# class ViewManager():
-#     def create_view(self, canvas, ID):
-#         view = StartFieldView(canvas, ID)
-#         view.resurrect(self)
-#         return view
-
-class StartFieldInfo():
-    def __init__(self):
-        self.protocol_name = ""
-        self.protocol_desc = ""
-        self.dependent_protocol_name = ""
-        self.dependency_pattern = ""
-
-class StartFieldView(tk.Canvas):
-    def __init__(self, parent, ID):
-        tk.Canvas.__init__(self, parent)
-        self.parent = parent
-        self.ID = ID
-
-        self.frame = tk.Frame(self, bg='purple', width=100, height=100)
-
-        # from titlebar import TitleBar
-        # self.titlebar = TitleBar('StartField []', self.frame)
-        # self.titlebar.grid(column=0, row=0)
-
-        self.protocol_name = tk.StringVar()
-        self.protocol_name.trace('w', self.update)
-        self.entry_prot_name = tk.Entry(self.frame, textvariable=self.protocol_name)
-        self.entry_prot_name.grid()
-
-        self.create_window((65, 11), window=self.frame)
-
-    def update(self, *args):
-        info = Tree.current.fields[self.ID]
-        info.protocol_name = self.protocol_name.get()
-
-    def resurrect(self, info):
-        self.protocol_name.set(info.protocol_name)
-
-    def hide(self):
-        self.configure(width=0,height=0)
-        self.frame.configure(width=0,height=0)

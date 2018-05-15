@@ -9,7 +9,7 @@ This code demonstrates a real-world drag and drop.
 #    2 Displays all messages
 #    1 Displays all but dnd_accept and dnd_motion messages
 #    0 Displays no messages
-Verbosity = 3
+Verbosity = 0
 
 # When you drag an existing object on a canvas, we normally make the original
 #    label into an invisible phantom, and what you are ACTUALLY dragging is

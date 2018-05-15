@@ -1,7 +1,7 @@
 import Tkinter as tk
 
 
-class PCAP(tk.Toplevel):
+class DialogOpenPCAP(tk.Toplevel):
     def __init__(self, *args, **kargs):
         tk.Toplevel.__init__(self, *args, **kargs)
         self.title("PCAP")
